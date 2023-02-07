@@ -1,11 +1,10 @@
-package com.passerby.worktestproject
+package sports.facts.bales
 
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.webkit.WebViewClient
 import androidx.lifecycle.AndroidViewModel
 import java.util.*
 

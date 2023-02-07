@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "606902648514",
-    "project_id": "testproject-34644",
-    "storage_bucket": "testproject-34644.appspot.com"
+    "project_number": "116041069114",
+    "project_id": "usuol-801f6",
+    "storage_bucket": "usuol-801f6.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:606902648514:android:8d8a70af2c5915e8e6455b",
+        "mobilesdk_app_id": "1:116041069114:android:ef70eed45eca47c5967b03",
         "android_client_info": {
-          "package_name": "com.passerby.worktestproject"
+          "package_name": "sports.facts.bales"
         }
       },
       "oauth_client": [
         {
-          "client_id": "606902648514-llm5dn9vemv7a5lft06b8ors84pmdq0a.apps.googleusercontent.com",
+          "client_id": "116041069114-m986qpqbdumk1lbet4n937iifoau32vm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC6vngW3ARQDOHacAMdhoanmsM-fEgCfrU"
+          "current_key": "AIzaSyDlh9qvW3sPuLIkrys-af0h_Aa-mo-t9mk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "606902648514-llm5dn9vemv7a5lft06b8ors84pmdq0a.apps.googleusercontent.com",
+              "client_id": "116041069114-m986qpqbdumk1lbet4n937iifoau32vm.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

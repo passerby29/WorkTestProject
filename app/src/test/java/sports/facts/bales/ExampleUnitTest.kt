@@ -1,4 +1,4 @@
-package com.passerby.worktestproject
+package sports.facts.bales
 
 import org.junit.Test
 

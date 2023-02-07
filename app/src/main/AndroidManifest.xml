@@ -9,20 +9,30 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:exported="true"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_logo_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkTestProject"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".InitialActivity"
+            android:configChanges="uiMode"
+            android:exported="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name="sports.facts.bales.MainActivity"
+            android:exported="true">
         </activity>
     </application>
 

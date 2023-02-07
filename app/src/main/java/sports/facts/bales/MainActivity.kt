@@ -1,4 +1,4 @@
-package com.passerby.worktestproject
+package sports.facts.bales
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
+import android.webkit.CookieManager
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -15,7 +17,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.passerby.worktestproject.databinding.ActivityMainBinding
+import sports.facts.bales.databinding.ActivityMainBinding
 import java.util.*
 
 
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var preferences: SharedPreferences
     private lateinit var viewModel: MainViewModel
-    lateinit var url: String
+    private lateinit var url: String
     private var mainList: ArrayList<String> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         preferences = getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE)
         setOnBackPressedDispatcher()
+        val flag = preferences.contains("url")
         viewModel = ViewModelProvider(
             this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[MainViewModel::class.java]
@@ -46,26 +49,36 @@ class MainActivity : AppCompatActivity() {
             }
             remoteConfig.setConfigSettingsAsync(configSettings)
             remoteConfig.fetchAndActivate().addOnCompleteListener(this) { task ->
-                if (task.isComplete) {
-                    Log.d("Firebase", "Success")
+                if (!flag) {
+                    if (task.isSuccessful) {
+                        Log.d("Firebase", "Success")
+                        url = Firebase.remoteConfig.getString("url")
+                        if (url.isEmpty() || viewModel.checkIsEmu()) {
+                            Toast.makeText(this, url, Toast.LENGTH_SHORT).show()
+                            val rvAdapter = MainRVAdapter(mainList)
+                            binding.recyclerView.apply {
+                                visibility = View.VISIBLE
+                                layoutManager =
+                                    LinearLayoutManager(
+                                        this@MainActivity,
+                                        LinearLayoutManager.VERTICAL,
+                                        false
+                                    )
+                                adapter = rvAdapter
+                            }
+                        } else {
+                            val editor = preferences.edit()
+                            editor.putString("url", url)
+                            editor.apply()
+                            openWebView(url, savedInstanceState)
+                        }
+                    } else {
+                        Log.d("Firebase", "Failed")
+                    }
                 } else {
-                    Log.d("Firebase", "Failed")
+                    url = preferences.getString("url", "").toString()
+                    openWebView(url, savedInstanceState)
                 }
-            }
-            url = Firebase.remoteConfig.getString("url")
-            if (url.isEmpty() || !checkIsSimAvailable() || viewModel.checkIsEmu()) {
-                val rvAdapter = MainRVAdapter(mainList)
-                binding.recyclerView.apply {
-                    visibility = View.VISIBLE
-                    layoutManager =
-                        LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
-                    adapter = rvAdapter
-                }
-            } else {
-                openWebView(url)
-                val editor = preferences.edit()
-                editor.putString("url", url)
-                editor.apply()
             }
         } else {
             binding.noInternetTv.visibility = View.VISIBLE
@@ -92,15 +105,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun openWebView(url: String) {
+    private fun openWebView(url: String, savedInstanceState: Bundle?) {
+        val cookieManager: CookieManager = CookieManager.getInstance()
+        cookieManager.setAcceptCookie(true)
         binding.mainWebView.webViewClient = WebViewClient()
-        binding.mainWebView.settings.javaScriptEnabled = true
-        binding.mainWebView.settings.domStorageEnabled = true
-        binding.mainWebView.settings.javaScriptCanOpenWindowsAutomatically = true
-        binding.mainWebView.loadUrl(url)
+
+        binding.mainWebView.settings.apply {
+            binding.mainWebView.settings.domStorageEnabled = true
+            javaScriptCanOpenWindowsAutomatically = true
+            javaScriptEnabled = true
+            loadWithOverviewMode = true
+            useWideViewPort = true
+            databaseEnabled = true
+            setSupportZoom(false)
+            allowFileAccess = true
+            allowContentAccess = true
+        }
+        if (savedInstanceState != null)
+            binding.mainWebView.restoreState(savedInstanceState)
+        else
+            binding.mainWebView.loadUrl(url)
     }
 
-    fun createList() {
+    private fun createList() {
         mainList.addAll(
             listOf(
                 "1. Badminton is the fastest racket sport: the speed of a shuttlecock can reach an average of 270 km/h.",
@@ -120,5 +147,10 @@ class MainActivity : AppCompatActivity() {
                 "15. The billiard game of snooker fell into decline in the mid-20th century. However, interest in her again greatly increased after the BBC channel chose her to demonstrate the benefits of color television and began to broadcast all the championships. The green table and multi-colored snooker balls were perfect for this purpose."
             )
         )
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        binding.mainWebView.saveState(outState)
+        super.onSaveInstanceState(outState)
     }
 }

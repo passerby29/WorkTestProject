@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.passerby.worktestproject'
+    namespace 'sports.facts.bales'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.passerby.worktestproject"
+        applicationId "sports.facts.bales"
         minSdk 21
         targetSdk 33
         versionCode 1
